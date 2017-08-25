@@ -8,6 +8,7 @@ from coverage.summary import SummaryReporter
 import sys
 
 
+INCLUDE_FILES = 'tests/*'
 ERROR_TEST_CODE_NOT_EXECUTED = 1
 ERROR_NO_TEST_FILES = 2
 
@@ -15,23 +16,18 @@ ERROR_NO_TEST_FILES = 2
 def main():
     cov = coverage()
     cov.load()
-    cov.config.from_args(include='tests/*')
+    cov.config.from_args(include=INCLUDE_FILES)
     reporter = SummaryReporter(cov, cov.config)
     files = reporter.find_file_reporters(morfs=None)
-
-    collect_missing = list()
 
     if files:
         for f in files:
             filename, statements, excluded, missing, missing_formatted = cov.analysis2(f)
             if missing:
-                collect_missing.append((f.relative_filename(), missing_formatted))
-
-        if collect_missing:
-            sys.stderr.write("Some or all code lines in the following test modules are not being executed:\n")
-            sys.stderr.write('\n'.join('{}\t{}'.format(*f) for f in collect_missing))
-            sys.stderr.write('\n')
-            return ERROR_TEST_CODE_NOT_EXECUTED
+                sys.stderr.write(("Some or all code lines in '{}' are not being executed. Run\n"
+                                  "  coverage report --skip-covered -m --include={}\n"
+                                  "for details.\n").format(INCLUDE_FILES, INCLUDE_FILES))
+                return ERROR_TEST_CODE_NOT_EXECUTED
 
         return 0
 
