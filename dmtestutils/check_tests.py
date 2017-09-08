@@ -36,4 +36,5 @@ def main():
         return ERROR_NO_TEST_FILES
 
 
-sys.exit(main())
+if __name__ == '__main__':
+    sys.exit(main())
