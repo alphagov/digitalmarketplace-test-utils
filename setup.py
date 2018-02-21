@@ -23,7 +23,10 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-    ],
+    ],  # Dependency list should be minimal: if a particular test helper has a dependency on another lib (such as
+        # Flask) then your app will already have that dependency included, and there's no need to add it here. If you
+        # aren't using that particular function, you have no need of the dependency, so we should not install it by
+        # default. Only add dependencies here if you introduce a new dependency that exists solely for testing purposes.
     entry_points={
         'console_scripts': [
         ],
