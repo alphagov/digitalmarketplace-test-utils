@@ -23,8 +23,8 @@ USERS = {
 }
 
 
-@login_for_tests.route('/auto-login')
-def auto_login():
+@login_for_tests.route('/auto-supplier-login')
+def auto_supplier_login():
     user_json = {"users": USERS['123']}
     user = User.from_json(user_json)
     login_user(user)
