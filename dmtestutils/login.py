@@ -5,14 +5,18 @@ from flask_login import login_user
 login_for_tests = Blueprint('login_for_tests', __name__)
 
 
+# Simplified example responses from the API
 USERS = {
     '123': {
         'id': 123,
-        'supplier_name': 'Supplier Name',
         'name': 'Name',
         'emailAddress': 'email@email.com',
         'role': 'supplier',
-        'supplierId': 1234,
+        'supplier': {
+            'name': 'Supplier Name',
+            'supplierId': 1234,
+            'organisationSize': 'small',
+        }
     },
     '234': {
         'id': 234,
