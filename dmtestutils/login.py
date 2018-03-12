@@ -16,13 +16,15 @@ USERS = {
             'name': 'Supplier Name',
             'supplierId': 1234,
             'organisationSize': 'small',
-        }
+        },
+        'userResearchOptedIn': True,
     },
     '234': {
         'id': 234,
         'name': 'Buyer',
         'emailAddress': 'buyer@email.com',
         'role': 'buyer',
+        'userResearchOptedIn': True,
     },
 }
 
