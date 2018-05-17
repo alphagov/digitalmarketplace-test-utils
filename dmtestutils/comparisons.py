@@ -8,6 +8,14 @@ class RestrictedAny:
     """
     Analogous to mock.ANY, this class takes an arbitrary callable in its constructor and the returned instance will
     appear to "equal" anything that produces a truthy result when passed as an argument to the ``condition`` callable.
+
+    Useful when wanting to assert the contents of a larger structure but be more flexible for certain members, e.g.
+
+    # only care that second number is odd
+    >>> (4, 5, 6,) == (4, RestrictedAny(lambda x: x % 2), 6,)
+    True
+    >>> (4, 9, 6,) == (4, RestrictedAny(lambda x: x % 2), 6,)
+    True
     """
     def __init__(self, condition):
         self._condition = condition
@@ -26,7 +34,10 @@ class AnySupersetOf(RestrictedAny):
     """
     Instance will appear to "equal" any dictionary-like object that is a "superset" of the the constructor-supplied
     ``subset_dict``, i.e. will ignore any keys present in the dictionary in question but missing from the reference
-    dict.
+    dict. e.g.
+
+    >>> [{"a": 123, "b": 456, "less": "predictabananas"}, 789] == [AnySupersetOf({"a": 123, "b": 456}), 789]
+    True
     """
     def __init__(self, subset_dict):
         # take an immutable dict copy of supplied dict-like object
@@ -40,6 +51,9 @@ class AnySupersetOf(RestrictedAny):
 class AnyStringMatching(RestrictedAny):
     """
     Instance will appear to "equal" any string that matches the constructor-supplied regex pattern
+
+    >>> {"a": "Metempsychosis", "b": "c"} == {"a": AnyStringMatching(r"m+.+psycho.*", flags=re.I), "b": "c"}
+    True
     """
     _cached_re_compile = staticmethod(lru_cache(maxsize=32)(re.compile))
 
