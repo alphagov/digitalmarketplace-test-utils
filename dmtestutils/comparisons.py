@@ -1,5 +1,6 @@
 from functools import lru_cache
 import re
+from types import MappingProxyType
 from typing.re import Pattern
 
 
@@ -28,7 +29,8 @@ class AnySupersetOf(RestrictedAny):
     dict.
     """
     def __init__(self, subset_dict):
-        self._subset_dict = subset_dict
+        # take an immutable dict copy of supplied dict-like object
+        self._subset_dict = MappingProxyType(dict(subset_dict))
         super().__init__(lambda other: self._subset_dict == {k: v for k, v in other.items() if k in self._subset_dict})
 
     def __repr__(self):
