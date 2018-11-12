@@ -11,18 +11,24 @@ Ie:
 {"type": "document", "extension": "pdf", "mime": "application/pdf", "offset": 0, "signature": ["25 50 44 46"]},
 ```
 
-And create a BytesIO object matching the 'signature' portion of the entry like so:
+And create a bytes object matching the 'signature' portion of the entry like so:
 
 ```
-valid_pdf = BytesIO(b'\x25\x50\x44\x46\xff\xff\xff\xff')
+valid_pdf = b'\x25\x50\x44\x46\xff\xff\xff\xff'
 ```
 
 where `\xff` is just extra padding to make the document not solely include just the format requirements but some extra
 bytes (not required by type checker).
-"""
+
+They can be used like:
+
+```
 from io import BytesIO
+valid_pdf_bytes = BytesIO(valid_pdf_bytes)
 
+```
+"""
 
-valid_pdf = BytesIO(b'\x25\x50\x44\x46\xff\xff\xff\xff')
+valid_pdf_bytes = b'\x25\x50\x44\x46\xff\xff\xff\xff'
 
-valid_jpeg = valid_jpg = BytesIO(b'\xff\xd8\xff\xff\xff\xff\xff\xff')
+valid_jpeg_bytes = valid_jpg_bytes = b'\xff\xd8\xff\xff\xff\xff\xff\xff'
