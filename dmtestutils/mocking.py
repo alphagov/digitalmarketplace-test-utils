@@ -37,6 +37,7 @@ Traceback (most recent call last):
 mocking.EggBottleException
 """
 
+
 def assert_args_and_return(retval, *args, **kwargs):
     """
     Given a return value and an arbitrary set of arguments, returns a callable which will return ``retval`` when called
@@ -51,14 +52,15 @@ def assert_args_and_return(retval, *args, **kwargs):
 
 def assert_args_and_raise(e, *args, **kwargs):
     """
-    Given a return value and an arbitrary set of arguments, returns a callable which will raise the ``Exception`` ``e`` when called
-    with arguments matching those specified here.
+    Given a return value and an arbitrary set of arguments, returns a callable which will raise the ``Exception`` ``e``
+    when called with arguments matching those specified here.
     """
     def _inner(*inner_args, **inner_kwargs):
         assert args == inner_args
         assert kwargs == inner_kwargs
         raise e
     return _inner
+
 
 def assert_args_and_return_or_raise(retval, e, *args, **kwargs):
     """
