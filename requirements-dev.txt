@@ -1,0 +1,6 @@
+-r requirements.txt
+
+flake8==3.5.0
+flake8-per-file-ignores
+mock
+pytest
