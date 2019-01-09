@@ -3,8 +3,8 @@ from datetime import datetime as dt
 import pytest
 from dmtestutils.api_model_stubs import (
     AuditEventStub, BriefStub, FrameworkStub, FrameworkAgreementStub, LotStub, SupplierStub, SupplierFrameworkStub,
-    _dos_lots
 )
+from dmtestutils.api_model_stubs.lot import dos_lots
 
 
 class TestAuditEventStub:
@@ -219,7 +219,7 @@ class TestFrameworkStub:
             "slug": "digital-outcomes-and-specialists",
             "framework": "digital-outcomes-and-specialists",
             "family": "digital-outcomes-and-specialists",
-            "lots": _dos_lots(),
+            "lots": dos_lots(),
             "frameworkAgreementDetails": {"variations": {}},
             "hasDirectAward": False,
             "hasFurtherCompetition": True,
