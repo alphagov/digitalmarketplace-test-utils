@@ -8,6 +8,7 @@ class SupplierFrameworkStub(BaseAPIModelStub):
         "agreementDetails": {},
         "agreementId": None,
         "agreementPath": None,
+        "agreementReturned": False,
         "agreementReturnedAt": None,
         "agreementStatus": None,
         "applicationCompanyDetailsConfirmed": None,
