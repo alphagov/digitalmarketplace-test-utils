@@ -27,7 +27,6 @@ class BriefStub(BaseAPIModelStub):
         "lotSlug": "digital-specialists",
         "isACopy": False,
         "status": "draft",
-        "users": [user],
         "createdAt": "2016-03-29T10:11:12.000000Z",
         "updatedAt": "2016-03-29T10:11:13.000000Z",
         "links": {}
@@ -43,8 +42,9 @@ class BriefStub(BaseAPIModelStub):
         super().__init__(**kwargs)
 
         if kwargs.get('user_id'):
-            self.user['id'] = kwargs.pop('user_id')
-            self.response_data['users'] = [self.user]
+            self.response_data['users'] = [self.user.copy()]
+            self.response_data['users'][0]['id'] = kwargs.pop('user_id')
+            del self.response_data['user_id']
 
         # Allow snake case framework_* kwargs for backwards compatibility
         for nested_framework_key, camelcase_key, snakecase_kwarg in [
@@ -69,6 +69,8 @@ class BriefStub(BaseAPIModelStub):
             if kwargs.get('clarification_questions_closed') is not None:
                 self.response_data["clarificationQuestionsAreClosed"] = kwargs.pop('clarification_questions_closed')
                 del self.response_data['clarification_questions_closed']
+            else:
+                self.response_data["clarificationQuestionsAreClosed"] = False
 
         if self.response_data['status'] is "withdrawn":
             self.response_data["withdrawnAt"] = "2016-05-07T00:00:00.000000Z"
@@ -76,3 +78,15 @@ class BriefStub(BaseAPIModelStub):
             self.response_data["unsuccessfulAt"] = "2016-05-07T00:00:00.000000Z"
         elif self.response_data['status'] is "cancelled":
             self.response_data["cancelledAt"] = "2016-05-07T00:00:00.000000Z"
+
+    def single_result_response(self):
+        # users and clarificationQuestions are always included in API response
+        if 'users' not in self.response_data:
+            self.response_data['users'] = [self.user.copy()]
+
+        if 'clarificationQuestions' not in self.response_data:
+            self.response_data['clarificationQuestions'] = []
+
+        return {
+            self.resource_name: self.response_data
+        }

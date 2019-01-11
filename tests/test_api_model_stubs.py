@@ -38,7 +38,7 @@ class TestAuditEventStub:
 
 class TestBriefStub:
 
-    def test_brief_stub_defaults(self):
+    def test_brief_stub_response_defaults(self):
         assert BriefStub().response() == {
             "id": 1234,
             "title": "I need a thing to do a thing",
@@ -56,15 +56,23 @@ class TestBriefStub:
             "lotName": "Digital Specialists",
             "lotSlug": "digital-specialists",
             "status": "draft",
-            "users": [{"active": True,
-                       "role": "buyer",
-                       "emailAddress": "buyer@email.com",
-                       "id": 123,
-                       "name": "Buyer User"}],
             "createdAt": "2016-03-29T10:11:12.000000Z",
             "updatedAt": "2016-03-29T10:11:13.000000Z",
             "links": {}
         }
+
+    def test_brief_stub_single_result_response_adds_users_and_clarification_questions(self):
+        api_response = BriefStub().single_result_response()
+        assert api_response['briefs']['clarificationQuestions'] == []
+        assert api_response['briefs']['users'] == [
+            {
+                "active": True,
+                "role": "buyer",
+                "emailAddress": "buyer@email.com",
+                "id": 123,
+                "name": "Buyer User"
+            }
+        ]
 
     @pytest.mark.parametrize(
         ("kwarg", "key", "value"), (
@@ -74,7 +82,7 @@ class TestBriefStub:
             ("clarification_questions", "clarificationQuestions", [{"question": "Why?", "answer": "Because"}]),
         )
     )
-    def test_returns_mapping_which_can_be_changed_using_kwargs(self, kwarg, key, value):
+    def test_brief_stub_optional_kwargs(self, kwarg, key, value):
         assert BriefStub(**{kwarg: value}).response()[key] == value
 
     @pytest.mark.parametrize(
