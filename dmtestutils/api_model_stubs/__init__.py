@@ -3,7 +3,7 @@ from .audit_event import AuditEventStub
 from .brief import BriefStub
 from .framework import FrameworkStub
 from .framework_agreement import FrameworkAgreementStub
-from .lot import LotStub
+from .lot import LotStub, as_a_service_lots, cloud_lots, dos_lots
 from .supplier import SupplierStub
 from .supplier_framework import SupplierFrameworkStub
 
