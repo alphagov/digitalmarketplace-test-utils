@@ -2,7 +2,8 @@
 from datetime import datetime as dt
 import pytest
 from dmtestutils.api_model_stubs import (
-    AuditEventStub, BriefStub, FrameworkStub, FrameworkAgreementStub, LotStub, SupplierStub, SupplierFrameworkStub,
+    AuditEventStub, BriefStub, BriefResponseStub, FrameworkStub, FrameworkAgreementStub, LotStub, SupplierStub,
+    SupplierFrameworkStub
 )
 from dmtestutils.api_model_stubs.lot import dos_lots
 
@@ -133,6 +134,79 @@ class TestBriefStub:
     def test_if_status_is_cancelled_brief_contains_milestone_dates(self):
         brief = BriefStub(status="cancelled").single_result_response()
         assert "cancelledAt" in brief["briefs"]
+
+
+class TestBriefResponseStub:
+
+    def test_brief_response_stub_default_values(self):
+        assert BriefResponseStub().response() == {
+            "availability": "25/01/2017",
+            "brief": {
+                "id": 1234,
+                "title": "I need a thing to do a thing",
+                "status": "live",
+                "applicationsClosedAt": "2016-11-22T11:22:33.444444Z",
+                "framework": {
+                    "family": "digital-outcomes-and-specialists",
+                    "name": "Digital Outcomes and Specialists 3",
+                    "slug": "digital-outcomes-and-specialists-3",
+                    "status": "live"
+                }
+            },
+            "briefId": 1234,
+            "createdAt": "2016-11-01T11:22:33.444444Z",
+            "essentialRequirements": [],
+            "essentialRequirementsMet": True,
+            "id": 54321,
+            "links": {
+                "brief": "http://localhost:5000/brief/1234",
+                "self": "http://localhost:5000/brief-responses/54321",
+                "supplier": "http://localhost:5000/supplier/1234"
+            },
+            "niceToHaveRequirements": [],
+            "respondToEmailAddress": "contactme@example.com",
+            "submittedAt": "2016-11-21T12:00:01.000000Z",
+            "status": "submitted",
+            "supplierId": 1234,
+            "supplierName": "My Little Company",
+            "supplierOrganisationSize": "micro",
+        }
+
+    def test_brief_response_stub_extra_kwargs(self):
+        br_stub = BriefResponseStub(
+            framework_slug="digital-outcomes-and-specialist-3",
+            supplier_id=555,
+            brief_id=666,
+            id=777,
+        ).response()
+
+        assert br_stub["brief"]["framework"]["slug"] == "digital-outcomes-and-specialist-3"
+        assert br_stub["supplierId"] == 555
+        assert br_stub["links"]["supplier"] == "http://localhost:5000/supplier/555"
+        assert br_stub["briefId"] == 666
+        assert br_stub["links"]["brief"] == "http://localhost:5000/brief/666"
+        assert br_stub['brief']['id'] == 666
+        assert br_stub["id"] == 777
+        assert br_stub["links"]["self"] == "http://localhost:5000/brief-response/777"
+
+        for snakecase_kwarg in ['framework_slug', 'supplier_id', 'brief_id']:
+            assert snakecase_kwarg not in br_stub
+
+    def test_brief_response_pending_awarded_status_adds_details(self):
+        br_stub = BriefResponseStub(status='pending-awarded').response()
+        assert br_stub["awardDetails"] == {"pending": True}
+
+    def test_brief_response_awarded_status_adds_details(self):
+        br_stub = BriefResponseStub(status='awarded').response()
+        assert br_stub["awardDetails"] == {
+            "awardedContractStartDate": "2017-03-01",
+            "awardedContractValue": "10000"
+        }
+
+    def test_brief_response_with_brief_kwarg_takes_precedence_over_brief_id(self):
+        br_stub = BriefResponseStub(brief={'id': 456}, brief_id=789).response()
+        assert br_stub['briefId'] == 456
+        assert br_stub["links"]["brief"] == "http://localhost:5000/brief/456"
 
 
 class TestFrameworkStub:
