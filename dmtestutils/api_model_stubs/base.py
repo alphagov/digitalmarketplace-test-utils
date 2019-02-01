@@ -35,6 +35,12 @@ class BaseAPIModelStub:
 
         self.response_data.update(**kwargs)
 
+    def _format_values(self, d):
+        """Format all entries in a dictionary using values from response data"""
+        return {
+            k: v.format(**self.response_data) for k, v in d.items()
+        }
+
     def response(self):
         return self.response_data
 
