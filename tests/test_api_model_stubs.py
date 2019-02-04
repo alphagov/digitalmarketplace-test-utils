@@ -2,6 +2,7 @@
 from datetime import datetime as dt
 import pytest
 from dmtestutils.api_model_stubs import (
+    ArchivedServiceStub,
     AuditEventStub,
     BriefStub,
     BriefResponseStub,
@@ -13,6 +14,37 @@ from dmtestutils.api_model_stubs import (
     SupplierFrameworkStub
 )
 from dmtestutils.api_model_stubs.lot import dos_lots
+
+
+class TestArchivedServiceStub:
+
+    def test_default_values(self):
+        assert ArchivedServiceStub().response() == {
+            "serviceName": "I run a service that does a thing",
+            "id": 1234,
+            "supplierId": 8866655,
+            "supplierName": "Kev's Pies",
+            "frameworkSlug": "g-cloud-10",
+            "frameworkFramework": "g-cloud",
+            "frameworkFamily": "g-cloud",
+            "frameworkName": "G-Cloud 10",
+            "frameworkStatus": "open",
+            "lot": "cloud-software",
+            "lotSlug": "cloud-software",
+            "lotName": "Cloud software",
+            "updatedAt": "2017-04-07T12:34:00.000000Z",
+            "createdAt": "2017-04-07T12:34:00.000000Z",
+            "status": "not-submitted",
+            "copiedToFollowingFramework": False,
+            "links": {
+                "self": "http://127.0.0.1:5000/archived-services/1234",
+            },
+        }
+
+    def test_id_is_service_id(self):
+        archived_service = ArchivedServiceStub(id=1111, service_id=10000).response()
+        assert archived_service["id"] == 10000
+        assert archived_service["links"]["self"] == "http://127.0.0.1:5000/archived-services/1111"
 
 
 class TestAuditEventStub:
@@ -294,6 +326,11 @@ class TestDraftServiceStub:
         draft_service = DraftServiceStub(framework_slug=framework_slug).response()
         assert draft_service["frameworkFamily"] == framework_family
         assert draft_service["frameworkName"] == framework_name
+
+    def test_can_have_service_id(self):
+        assert "serviceId" not in DraftServiceStub().response()
+        assert "serviceId" in DraftServiceStub(service_id=1000).response()
+        assert "serviceId" in DraftServiceStub(serviceId=1000).response()
 
 
 class TestFrameworkStub:

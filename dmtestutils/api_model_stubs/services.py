@@ -1,15 +1,14 @@
 
 from .base import BaseAPIModelStub
 
+__all__ = [
+    "ArchivedServiceStub",
+    "DraftServiceStub",
+]
 
-class DraftServiceStub(BaseAPIModelStub):
+
+class ServicesBaseStub(BaseAPIModelStub):
     resource_name = "services"
-    links = {
-        "self": "http://127.0.0.1:5000/draft-services/{id}",
-        "publish": "http://127.0.0.1:5000/draft-services/{id}/publish",
-        "complete": "http://127.0.0.1:5000/draft-services/{id}/complete",
-        "copy": "http://127.0.0.1:5000/draft-services/{id}/copy",
-    }
     default_data = {
         "id": 1234,
         "copiedToFollowingFramework": False,
@@ -29,6 +28,8 @@ class DraftServiceStub(BaseAPIModelStub):
         "updatedAt": "2017-04-07T12:34:00.000000Z",
     }
     optional_keys = (
+        ("id", "serviceId"),
+        ("id", "service_id"),
         ("frameworkFamily", "framework_family"),
         ("frameworkFramework", "framework_framework"),
         ("frameworkName", "framework_name"),
@@ -56,3 +57,40 @@ class DraftServiceStub(BaseAPIModelStub):
 
         if self.response_data["status"] != "not-submitted":
             self.response_data["updatedAt"] = "2017-05-08T13:24:00.000000Z"
+
+
+class ArchivedServiceStub(ServicesBaseStub):
+    resource_name = "services"
+    links = {
+        "self": "http://127.0.0.1:5000/archived-services/{id}",
+    }
+
+    def __init__(self, **kwargs):
+        service_id = 1234
+        service_id = kwargs.pop("service_id", service_id)
+        service_id = kwargs.pop("serviceId", service_id)
+        super().__init__(**kwargs)
+        self.response_data["id"] = service_id
+
+
+class DraftServiceStub(ServicesBaseStub):
+    links = {
+        "self": "http://127.0.0.1:5000/draft-services/{id}",
+        "publish": "http://127.0.0.1:5000/draft-services/{id}/publish",
+        "complete": "http://127.0.0.1:5000/draft-services/{id}/complete",
+        "copy": "http://127.0.0.1:5000/draft-services/{id}/copy",
+    }
+    optional_keys = (
+        ("frameworkFamily", "framework_family"),
+        ("frameworkFramework", "framework_framework"),
+        ("frameworkName", "framework_name"),
+        ("frameworkSlug", "framework_slug"),
+        ("lotSlug", "lot_slug"),
+        ("lotName", "lot_name"),
+        ("serviceId", "service_id"),
+        ("serviceName", "service_name"),
+        ("supplierId", "supplier_id"),
+        ("supplierName", "supplier_name"),
+        ("createdAt", "created_at"),
+        ("updatedAt", "updated_at"),
+    )
