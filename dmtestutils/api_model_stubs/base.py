@@ -1,3 +1,6 @@
+import re
+
+
 class BaseAPIModelStub:
     """
     Generates example JSON responses for commonly-used serializable API models,
@@ -34,6 +37,37 @@ class BaseAPIModelStub:
                 self.response_data[camelcase_key] = kwargs.pop(snakecase_kwarg)
 
         self.response_data.update(**kwargs)
+
+    def _format_framework(self, slug, oldstyle=False):
+        """Return a dictionary with correct keys for framework slug"""
+        family, iteration = re.match(r"^(?P<family>[a-z-]*)(?:-(?P<iteration>\d+))?$", slug).groups()
+        name = (
+            {
+                "g-cloud": "G-Cloud",
+                "digital-outcomes-and-specialists": "Digital Outcomes and Specialists",
+            }.get(family,
+                  slug.replace("-", " ").title())
+        )
+        if iteration:
+            name += " " + iteration
+
+        framework = {
+            "family": family,
+            "slug": slug,
+            "name": name,
+        }
+        if not oldstyle:
+            return framework
+        else:
+            oldstyle_keys = {
+                "frameworkFamily": "family",
+                "frameworkSlug": "slug",
+                "frameworkName": "name",
+            }
+            return {
+                oldstyle_key: framework[newstyle_key]
+                for oldstyle_key, newstyle_key in oldstyle_keys.items()
+            }
 
     def _format_values(self, d):
         """Format all entries in a dictionary using values from response data"""
