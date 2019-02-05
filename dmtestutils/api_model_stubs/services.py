@@ -4,13 +4,14 @@ from .base import BaseAPIModelStub
 __all__ = [
     "ArchivedServiceStub",
     "DraftServiceStub",
+    "ServiceStub",
 ]
 
 
-class ServicesBaseStub(BaseAPIModelStub):
+class ServicesStubsBase(BaseAPIModelStub):
     resource_name = "services"
     default_data = {
-        "id": 1234,
+        "id": 1010101010,
         "copiedToFollowingFramework": False,
         "frameworkSlug": "g-cloud-10",
         "frameworkFramework": "g-cloud",
@@ -55,25 +56,22 @@ class ServicesBaseStub(BaseAPIModelStub):
         ):
             self.response_data.update(self._format_framework(self.response_data["frameworkSlug"], oldstyle=True))
 
-        if self.response_data["status"] != "not-submitted":
-            self.response_data["updatedAt"] = "2017-05-08T13:24:00.000000Z"
 
-
-class ArchivedServiceStub(ServicesBaseStub):
-    resource_name = "services"
+class ArchivedServiceStub(ServicesStubsBase):
     links = {
         "self": "http://127.0.0.1:5000/archived-services/{id}",
     }
 
     def __init__(self, **kwargs):
-        service_id = 1234
+        service_id = self.default_data["id"]
         service_id = kwargs.pop("service_id", service_id)
         service_id = kwargs.pop("serviceId", service_id)
+        kwargs.setdefault("id", 1234)
         super().__init__(**kwargs)
         self.response_data["id"] = service_id
 
 
-class DraftServiceStub(ServicesBaseStub):
+class DraftServiceStub(ServicesStubsBase):
     links = {
         "self": "http://127.0.0.1:5000/draft-services/{id}",
         "publish": "http://127.0.0.1:5000/draft-services/{id}/publish",
@@ -94,3 +92,18 @@ class DraftServiceStub(ServicesBaseStub):
         ("createdAt", "created_at"),
         ("updatedAt", "updated_at"),
     )
+
+    def __init__(self, **kwargs):
+        kwargs.setdefault("id", 1234)
+        super().__init__(**kwargs)
+
+
+class ServiceStub(ServicesStubsBase):
+    links = {
+        "self": "http://127.0.0.1:5000/services/{id}",
+    }
+
+    def __init__(self, **kwargs):
+        if "id" in kwargs:
+            del kwargs["id"]
+        super().__init__(**kwargs)

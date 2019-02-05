@@ -5,7 +5,7 @@ from .brief_response import BriefResponseStub
 from .framework import FrameworkStub
 from .framework_agreement import FrameworkAgreementStub
 from .lot import LotStub, as_a_service_lots, cloud_lots, dos_lots
-from .services import ArchivedServiceStub, DraftServiceStub
+from .services import ArchivedServiceStub, DraftServiceStub, ServiceStub
 from .supplier import SupplierStub
 from .supplier_framework import SupplierFrameworkStub
 
@@ -29,13 +29,6 @@ class DirectAwardSearchStub(BaseAPIModelStub):
 
 class OutcomeStub(BaseAPIModelStub):
     resource_name = 'outcome'
-    default_data = {
-
-    }
-
-
-class ServiceStub(BaseAPIModelStub):
-    resource_name = 'services'
     default_data = {
 
     }
