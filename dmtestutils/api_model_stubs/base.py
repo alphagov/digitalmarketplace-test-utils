@@ -30,13 +30,21 @@ class BaseAPIModelStub:
 
     def __init__(self, **kwargs):
         self.response_data = self.default_data.copy()
+        self._normalise_kwargs(kwargs)
+        self.response_data.update(**kwargs)
 
+    def _normalise_kwargs(self, kwargs):
+        """Turn any snake_case kwargs into camelCase
+
+        Modifies the dictionary :kwargs: in-place.
+
+        Requires a list of tuples at self.optional_keys to
+        map between kwargs and keys in self.response_data.
+        """
         # Backwards compatibility for snake case kwargs
         for camelcase_key, snakecase_kwarg in self.optional_keys:
             if kwargs.get(snakecase_kwarg) is not None:
-                self.response_data[camelcase_key] = kwargs.pop(snakecase_kwarg)
-
-        self.response_data.update(**kwargs)
+                kwargs[camelcase_key] = kwargs.pop(snakecase_kwarg)
 
     def _format_framework(self, slug, oldstyle=False):
         """Return a dictionary with correct keys for framework slug"""
