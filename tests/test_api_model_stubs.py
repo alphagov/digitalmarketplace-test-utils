@@ -2,10 +2,50 @@
 from datetime import datetime as dt
 import pytest
 from dmtestutils.api_model_stubs import (
-    AuditEventStub, BriefStub, BriefResponseStub, FrameworkStub, FrameworkAgreementStub, LotStub, SupplierStub,
+    ArchivedServiceStub,
+    AuditEventStub,
+    BriefStub,
+    BriefResponseStub,
+    DraftServiceStub,
+    FrameworkStub,
+    FrameworkAgreementStub,
+    LotStub,
+    ServiceStub,
+    SupplierStub,
     SupplierFrameworkStub
 )
 from dmtestutils.api_model_stubs.lot import dos_lots
+
+
+class TestArchivedServiceStub:
+
+    def test_default_values(self):
+        assert ArchivedServiceStub().response() == {
+            "serviceName": "I run a service that does a thing",
+            "id": 1010101010,
+            "supplierId": 8866655,
+            "supplierName": "Kev's Pies",
+            "frameworkSlug": "g-cloud-10",
+            "frameworkFramework": "g-cloud",
+            "frameworkFamily": "g-cloud",
+            "frameworkName": "G-Cloud 10",
+            "frameworkStatus": "open",
+            "lot": "cloud-software",
+            "lotSlug": "cloud-software",
+            "lotName": "Cloud software",
+            "updatedAt": "2017-04-07T12:34:00.000000Z",
+            "createdAt": "2017-04-07T12:34:00.000000Z",
+            "status": "not-submitted",
+            "copiedToFollowingFramework": False,
+            "links": {
+                "self": "http://127.0.0.1:5000/archived-services/1234",
+            },
+        }
+
+    def test_id_is_service_id(self):
+        archived_service = ArchivedServiceStub(id=1111, service_id=10000).response()
+        assert archived_service["id"] == 10000
+        assert archived_service["links"]["self"] == "http://127.0.0.1:5000/archived-services/1111"
 
 
 class TestAuditEventStub:
@@ -207,6 +247,49 @@ class TestBriefResponseStub:
         br_stub = BriefResponseStub(brief={'id': 456}, brief_id=789).response()
         assert br_stub['briefId'] == 456
         assert br_stub["links"]["brief"] == "http://localhost:5000/brief/456"
+
+
+class TestDraftServiceStub:
+
+    def test_default_values(self):
+        assert DraftServiceStub().response() == {
+            "serviceName": "I run a service that does a thing",
+            "id": 1234,
+            "supplierId": 8866655,
+            "supplierName": "Kev's Pies",
+            "frameworkSlug": "g-cloud-10",
+            "frameworkFramework": "g-cloud",
+            "frameworkFamily": "g-cloud",
+            "frameworkName": "G-Cloud 10",
+            "frameworkStatus": "open",
+            "lot": "cloud-software",
+            "lotSlug": "cloud-software",
+            "lotName": "Cloud software",
+            "updatedAt": "2017-04-07T12:34:00.000000Z",
+            "createdAt": "2017-04-07T12:34:00.000000Z",
+            "status": "not-submitted",
+            "copiedToFollowingFramework": False,
+            "links": {
+                "self": "http://127.0.0.1:5000/draft-services/1234",
+                "publish": "http://127.0.0.1:5000/draft-services/1234/publish",
+                "complete": "http://127.0.0.1:5000/draft-services/1234/complete",
+                "copy": "http://127.0.0.1:5000/draft-services/1234/copy",
+            },
+        }
+
+    def test_id_kwarg_changes_id_and_links(self):
+        draft_service = DraftServiceStub(id=555).response()
+        assert draft_service["links"] == {
+            "self": "http://127.0.0.1:5000/draft-services/555",
+            "publish": "http://127.0.0.1:5000/draft-services/555/publish",
+            "complete": "http://127.0.0.1:5000/draft-services/555/complete",
+            "copy": "http://127.0.0.1:5000/draft-services/555/copy",
+        }
+
+    def test_can_have_service_id(self):
+        assert "serviceId" not in DraftServiceStub().response()
+        assert "serviceId" in DraftServiceStub(service_id=1000).response()
+        assert "serviceId" in DraftServiceStub(serviceId=1000).response()
 
 
 class TestFrameworkStub:
@@ -431,6 +514,48 @@ class TestLotStub:
     def test_returns_mapping_which_can_be_changed_using_kwargs(self, kwarg, key, value):
         assert key in LotStub().response()
         assert LotStub(**{kwarg: value}).response()[key] == value
+
+
+@pytest.mark.parametrize("cls", (ArchivedServiceStub, DraftServiceStub, ServiceStub))
+class TestServicesStubs:
+
+    @pytest.mark.parametrize(
+        ("kwarg", "key", "value"), (
+            ("lot_slug", "lotSlug", "lorra-lorra-fun"),
+            ("lot_name", "lotName", "Kev's lot"),
+            ("status", "status", "published"),
+            ("status", "status", "enabled"),
+            ("serviceName", "serviceName", "My super cool service"),
+            ("service_name", "serviceName", "My super cool service"),
+            ("supplierId", "supplierId", 9000),
+            ("supplier_id", "supplierId", 9001),
+            ("supplierName", "supplierName", "My overridden name"),
+            ("supplier_name", "supplierName", "My overridden name"),
+            ("updated_at", "updatedAt", "The distant future"),
+            ("created_at", "createdAt", "The year 2000"),
+        )
+    )
+    def test_returns_mapping_which_can_be_changed_using_kwargs(self, cls, kwarg, key, value):
+        assert key in cls().response()
+        assert cls(**{kwarg: value}).response()[key] == value
+        assert cls(**{kwarg: value}).single_result_response()["services"][key] == value
+
+    @pytest.mark.parametrize(
+        ("framework_slug", "framework_family", "framework_name"),
+        (
+            ("g-cloud-4", "g-cloud", "G-Cloud 4"),
+            ("g-cloud-10", "g-cloud", "G-Cloud 10"),
+            ("digital-outcomes-and-specialists", "digital-outcomes-and-specialists",
+                "Digital Outcomes and Specialists"),
+            ("digital-outcomes-and-specialists-3", "digital-outcomes-and-specialists",
+                "Digital Outcomes and Specialists 3"),
+            ("my-amazing-framework", "my-amazing-framework", "My Amazing Framework"),
+        )
+    )
+    def test_framework_name_and_family_updated_from_slug(self, cls, framework_slug, framework_family, framework_name):
+        response = cls(framework_slug=framework_slug).response()
+        assert response["frameworkFamily"] == framework_family
+        assert response["frameworkName"] == framework_name
 
 
 class TestSupplierStub:

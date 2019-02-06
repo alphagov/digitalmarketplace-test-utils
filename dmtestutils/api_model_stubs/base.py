@@ -1,3 +1,6 @@
+import re
+
+
 class BaseAPIModelStub:
     """
     Generates example JSON responses for commonly-used serializable API models,
@@ -27,13 +30,58 @@ class BaseAPIModelStub:
 
     def __init__(self, **kwargs):
         self.response_data = self.default_data.copy()
+        self._normalise_kwargs(kwargs)
+        self.response_data.update(**kwargs)
 
+    def _normalise_kwargs(self, kwargs):
+        """Turn any snake_case kwargs into camelCase
+
+        Modifies the dictionary :kwargs: in-place.
+
+        Requires a list of tuples at self.optional_keys to
+        map between kwargs and keys in self.response_data.
+        """
         # Backwards compatibility for snake case kwargs
         for camelcase_key, snakecase_kwarg in self.optional_keys:
             if kwargs.get(snakecase_kwarg) is not None:
-                self.response_data[camelcase_key] = kwargs.pop(snakecase_kwarg)
+                kwargs[camelcase_key] = kwargs.pop(snakecase_kwarg)
 
-        self.response_data.update(**kwargs)
+    def _format_framework(self, slug, oldstyle=False):
+        """Return a dictionary with correct keys for framework slug"""
+        family, iteration = re.match(r"^(?P<family>[a-z-]*)(?:-(?P<iteration>\d+))?$", slug).groups()
+        name = (
+            {
+                "g-cloud": "G-Cloud",
+                "digital-outcomes-and-specialists": "Digital Outcomes and Specialists",
+            }.get(family,
+                  slug.replace("-", " ").title())
+        )
+        if iteration:
+            name += " " + iteration
+
+        framework = {
+            "family": family,
+            "slug": slug,
+            "name": name,
+        }
+        if not oldstyle:
+            return framework
+        else:
+            oldstyle_keys = {
+                "frameworkFamily": "family",
+                "frameworkSlug": "slug",
+                "frameworkName": "name",
+            }
+            return {
+                oldstyle_key: framework[newstyle_key]
+                for oldstyle_key, newstyle_key in oldstyle_keys.items()
+            }
+
+    def _format_values(self, d):
+        """Format all entries in a dictionary using values from response data"""
+        return {
+            k: v.format(**self.response_data) for k, v in d.items()
+        }
 
     def response(self):
         return self.response_data
