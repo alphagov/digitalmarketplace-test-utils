@@ -1,6 +1,6 @@
 import re
 
-from dmtestutils.comparisons import RestrictedAny, AnySupersetOf, AnyStringMatching
+from dmtestutils.comparisons import RestrictedAny, AnySupersetOf, AnyStringMatching, ExactIdentity
 
 
 class TestRestrictedAny:
@@ -61,3 +61,10 @@ class TestStringMatching:
             "y": pattern_e,
             "z": pattern_f,
         }
+
+
+class TestExactIdentity:
+    def test_exact_identity(self):
+        x = []
+        assert (7, ExactIdentity(x),) == (7, x,)
+        assert not (7, ExactIdentity(x),) == (7, [],)
