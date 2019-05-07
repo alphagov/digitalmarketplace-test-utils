@@ -71,3 +71,21 @@ class AnyStringMatching(RestrictedAny):
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self._regex})"
+
+
+class ExactIdentity(RestrictedAny):
+    """
+    Instance will appear to "equal" only to the exact object supplied at construction time.
+
+    >>> x = []
+    >>> (7, ExactIdentity(x),) == (7, x,)
+    True
+    >>> (7, ExactIdentity(x),) == (7, [],)
+    False
+    """
+    def __init__(self, reference_object):
+        self._reference_object = reference_object
+        super().__init__(lambda other: self._reference_object is other)
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self._reference_object!r} @ {hex(id(self._reference_object))})"
