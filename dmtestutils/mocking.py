@@ -36,9 +36,10 @@ Traceback (most recent call last):
     ...
 mocking.EggBottleException
 """
+from typing import Callable, Iterable
 
 
-def assert_args_and_return(retval, *args, **kwargs):
+def assert_args_and_return(retval, *args, **kwargs) -> Callable:
     """
     Given a return value and an arbitrary set of arguments, returns a callable which will return ``retval`` when called
     with arguments matching those specified here, otherwise will raise an ``AssertionError``.
@@ -50,7 +51,7 @@ def assert_args_and_return(retval, *args, **kwargs):
     return _inner
 
 
-def assert_args_and_raise(e, *args, **kwargs):
+def assert_args_and_raise(e: Exception, *args, **kwargs) -> Callable:
     """
     Given a return value and an arbitrary set of arguments, returns a callable which will raise the ``Exception`` ``e``
     when called with arguments matching those specified here.
@@ -62,7 +63,7 @@ def assert_args_and_raise(e, *args, **kwargs):
     return _inner
 
 
-def assert_args_and_return_or_raise(retval, e, *args, **kwargs):
+def assert_args_and_return_or_raise(retval, e, *args, **kwargs) -> Callable:
     """
     Given a return value and an arbitrary set of arguments, returns a callable which will return ``retval`` when called
     with arguments matching those specified here, otherwise will raise the exception ``e``.
@@ -72,4 +73,17 @@ def assert_args_and_return_or_raise(retval, e, *args, **kwargs):
             return retval
         else:
             raise e
+    return _inner
+
+
+def assert_args_and_return_iter_over(retval: Iterable, *args, **kwargs) -> Callable:
+    """
+    Given an iterable return value and an arbitrary set of arguments, returns a callable which will return
+    a fresh iterator over ``retval`` when called with arguments matching those specified here, otherwise will raise
+    an ``AssertionError``.
+    """
+    def _inner(*inner_args, **inner_kwargs):
+        assert args == inner_args
+        assert kwargs == inner_kwargs
+        return iter(retval)
     return _inner

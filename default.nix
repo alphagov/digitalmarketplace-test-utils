@@ -13,6 +13,7 @@ in (with args; {
     shortName = "dm-tst-utl";
     buildInputs = [
       pythonPackages.python
+      pkgs.glibcLocales
     ] ++ pkgs.stdenv.lib.optionals forDev [
       # exotic things possibly go here
     ];
