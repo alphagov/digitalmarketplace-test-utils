@@ -4,8 +4,6 @@ from .base import BaseAPIModelStub
 class SupplierFrameworkStub(BaseAPIModelStub):
     resource_name = 'frameworkInterest'
     default_data = {
-        "agreedVariations": {},
-        "agreementDetails": {},
         "agreementId": None,
         "agreementPath": None,
         "agreementReturned": False,
@@ -16,7 +14,6 @@ class SupplierFrameworkStub(BaseAPIModelStub):
         "countersignedAt": None,
         "countersignedDetails": None,
         "countersignedPath": None,
-        "declaration": {},
         "frameworkFamily": "g-cloud",
         "frameworkFramework": "g-cloud",
         "frameworkSlug": "g-cloud-10",
@@ -36,14 +33,17 @@ class SupplierFrameworkStub(BaseAPIModelStub):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         if kwargs.get('agreed_variations'):
-            self.response_data['agreedVariations'].update({
+            self.response_data['agreedVariations'] = {
                 "1": {
                     "agreedAt": "2018-05-04T16:58:52.362855Z",
                     "agreedUserEmail": "stub@example.com",
                     "agreedUserId": 123,
                     "agreedUserName": "Test user"
                 }
-            })
+            }
+        else:
+            self.response_data['agreedVariations'] = {}
+
         if kwargs.get('with_declaration'):
             self.response_data['declaration'] = {
                 "nameOfOrganisation": "My Little Company",
@@ -51,6 +51,9 @@ class SupplierFrameworkStub(BaseAPIModelStub):
                 "primaryContactEmail": "supplier@example.com",
                 "status": kwargs.get('declaration_status', 'unstarted'),
             }
+        else:
+            self.response_data['declaration'] = {}
+
         if kwargs.get('with_agreement'):
             agreement_data = {
                 "agreementId": 9876,
@@ -82,6 +85,8 @@ class SupplierFrameworkStub(BaseAPIModelStub):
                     "approvedByUserName": "Test user",
                 })
             self.response_data.update(agreement_data)
+        else:
+            self.response_data['agreementDetails'] = {}
 
         for snakecase_key in [
             'agreed_variations', 'with_declaration', 'with_agreement', 'with_users', 'declaration_status'
