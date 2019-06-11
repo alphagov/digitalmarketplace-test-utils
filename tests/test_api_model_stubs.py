@@ -640,6 +640,7 @@ class TestSupplierFrameworkStub:
             'agreementReturned': False,
             'agreementReturnedAt': None,
             'agreementStatus': None,
+            'allowDeclarationReuse': True,
             'applicationCompanyDetailsConfirmed': None,
             'countersigned': False,
             'countersignedAt': None,
@@ -667,6 +668,7 @@ class TestSupplierFrameworkStub:
             with_agreement=True,
             with_users=True,
             application_company_details_confirmed=True,
+            allowDeclarationReuse=False,
         )
         assert sf.response() == {
             "agreedVariations": {
@@ -690,6 +692,7 @@ class TestSupplierFrameworkStub:
             "agreementReturned": True,
             'agreementReturnedAt': "2017-05-17T14:31:27.118905Z",
             'agreementStatus': "countersigned",
+            'allowDeclarationReuse': False,
             'applicationCompanyDetailsConfirmed': True,
             'countersigned': True,
             'countersignedAt': "2017-06-15T08:41:46.390992Z",
