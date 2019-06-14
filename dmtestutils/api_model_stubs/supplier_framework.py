@@ -9,6 +9,7 @@ class SupplierFrameworkStub(BaseAPIModelStub):
         "agreementReturned": False,
         "agreementReturnedAt": None,
         "agreementStatus": None,
+        "allowDeclarationReuse": True,
         "applicationCompanyDetailsConfirmed": None,
         "countersigned": False,
         "countersignedAt": None,
