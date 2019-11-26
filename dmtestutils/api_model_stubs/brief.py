@@ -61,7 +61,7 @@ class BriefStub(BaseAPIModelStub):
                 del self.response_data[snakecase_kwarg]
 
         # Status-dependent values
-        if self.response_data['status'] is not "draft":
+        if self.response_data['status'] != "draft":
             self.response_data["publishedAt"] = "2016-03-29T10:11:14.000000Z"
             self.response_data["applicationsClosedAt"] = "2016-04-07T00:00:00.000000Z"
             self.response_data["clarificationQuestionsClosedAt"] = "2016-04-02T00:00:00.000000Z"
@@ -72,11 +72,11 @@ class BriefStub(BaseAPIModelStub):
             else:
                 self.response_data["clarificationQuestionsAreClosed"] = False
 
-        if self.response_data['status'] is "withdrawn":
+        if self.response_data['status'] == "withdrawn":
             self.response_data["withdrawnAt"] = "2016-05-07T00:00:00.000000Z"
-        elif self.response_data['status'] is "unsuccessful":
+        elif self.response_data['status'] == "unsuccessful":
             self.response_data["unsuccessfulAt"] = "2016-05-07T00:00:00.000000Z"
-        elif self.response_data['status'] is "cancelled":
+        elif self.response_data['status'] == "cancelled":
             self.response_data["cancelledAt"] = "2016-05-07T00:00:00.000000Z"
 
     def single_result_response(self):
