@@ -1,6 +1,5 @@
 -r requirements.txt
 
-flake8==3.5.0
-flake8-per-file-ignores
+flake8==3.7.7
 mock
 pytest
