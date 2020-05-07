@@ -131,3 +131,13 @@ class FrameworkStub(BaseAPIModelStub):
 
         # Copy variations to nested framework agreement details
         self.response_data['frameworkAgreementDetails']['variations'] = self.response_data['variations']
+
+        # Copy lots to nested framework agreement details
+        if 'lots' in kwargs:
+            self.response_data['frameworkAgreementDetails']['lotOrder'] = [
+                lot['slug'] for lot in self.response_data['lots']
+            ]
+            self.response_data['frameworkAgreementDetails']['lotDescriptions'] = {
+                lot['slug']: f"Lot {i+1}: {lot['name']}"
+                for i, lot in enumerate(self.response_data['lots'])
+            }

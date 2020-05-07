@@ -414,7 +414,10 @@ class TestFrameworkStub:
         assert FrameworkStub(slug='digital-outcomes-and-specialists').response() == expected
 
     def test_lots_kwarg_changes_lots_and_framework_agreement_details(self):
-        lots = [LotStub(slug='cloud-hosting').response(), LotStub(slug='cloud-support').response()]
+        lots = [
+            LotStub(slug='cloud-hosting', name='Cloud hosting').response(),
+            LotStub(slug='cloud-support', name='Cloud support').response(),
+        ]
 
         expected = FrameworkStub().response()
         expected["lots"] = lots
@@ -424,7 +427,16 @@ class TestFrameworkStub:
             "cloud-support": "Lot 2: Cloud support",
         }
 
-        assert FrameworkStub(lots=lots).response() == expected
+        response = FrameworkStub(lots=lots).response()
+
+        assert response["lots"] == lots
+        assert response["frameworkAgreementDetails"]["lotOrder"] == ["cloud-hosting", "cloud-support"]
+        assert response["frameworkAgreementDetails"]["lotDescriptions"] == {
+            "cloud-hosting": "Lot 1: Cloud hosting",
+            "cloud-support": "Lot 2: Cloud support",
+        }
+
+        assert response == expected
 
     @pytest.mark.parametrize(
         ("kwarg", "datetime_obj", "key", "value"), (
