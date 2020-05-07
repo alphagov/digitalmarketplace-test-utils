@@ -1,4 +1,5 @@
 import re
+from copy import deepcopy
 
 
 class BaseAPIModelStub:
@@ -29,7 +30,7 @@ class BaseAPIModelStub:
     optional_keys = []
 
     def __init__(self, **kwargs):
-        self.response_data = self.default_data.copy()
+        self.response_data = deepcopy(self.default_data)
         self._normalise_kwargs(kwargs)
         self.response_data.update(**kwargs)
 

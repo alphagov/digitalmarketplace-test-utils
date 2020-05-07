@@ -2,6 +2,8 @@
 from datetime import datetime as dt
 import pytest
 from dmtestutils.api_model_stubs import (
+    BaseAPIModelStub,
+
     ArchivedServiceStub,
     AuditEventStub,
     BriefStub,
@@ -15,6 +17,25 @@ from dmtestutils.api_model_stubs import (
     SupplierFrameworkStub
 )
 from dmtestutils.api_model_stubs.lot import dos_lots
+
+
+class TestBaseAPIModelStub:
+
+    def test_response_data_is_copied_from_default_data(self):
+        class APIModelStub(BaseAPIModelStub):
+            default_data = {
+                "key": "value",
+                "dict": {
+                    "a": 1,
+                    "b": 2,
+                }
+            }
+
+        api_model_stub = APIModelStub()
+        assert api_model_stub.response() == APIModelStub.default_data
+
+        APIModelStub.default_data["dict"]["a"] = 97
+        assert api_model_stub.response()["dict"]["a"] == 1
 
 
 class TestArchivedServiceStub:
