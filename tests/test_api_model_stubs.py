@@ -160,6 +160,23 @@ class TestBriefStub:
         assert brief["briefs"][key] == value
         assert brief["briefs"]["framework"][inner_key] == value
 
+    @pytest.mark.parametrize(
+        ("framework_slug", "framework_family", "framework_name"),
+        (
+            ("digital-outcomes-and-specialists", "digital-outcomes-and-specialists",
+                "Digital Outcomes and Specialists"),
+            ("digital-outcomes-and-specialists-4", "digital-outcomes-and-specialists",
+                "Digital Outcomes and Specialists 4"),
+            ("my-amazing-framework", "my-amazing-framework", "My Amazing Framework"),
+        )
+    )
+    def test_framework_name_and_family_updated_from_slug(self, framework_slug, framework_family, framework_name):
+        response = BriefStub(framework_slug=framework_slug).response()
+        assert response["frameworkFramework"] == framework_family
+        assert response["frameworkName"] == framework_name
+        assert response["framework"]["family"] == framework_family
+        assert response["framework"]["name"] == framework_name
+
     def test_user_id_kwarg(self):
         assert BriefStub(user_id=234).response()["users"][0]["id"] == 234
 
