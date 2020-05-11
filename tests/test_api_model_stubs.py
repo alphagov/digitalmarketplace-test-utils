@@ -2,6 +2,8 @@
 from datetime import datetime as dt
 import pytest
 from dmtestutils.api_model_stubs import (
+    BaseAPIModelStub,
+
     ArchivedServiceStub,
     AuditEventStub,
     BriefStub,
@@ -15,6 +17,25 @@ from dmtestutils.api_model_stubs import (
     SupplierFrameworkStub
 )
 from dmtestutils.api_model_stubs.lot import dos_lots
+
+
+class TestBaseAPIModelStub:
+
+    def test_response_data_is_copied_from_default_data(self):
+        class APIModelStub(BaseAPIModelStub):
+            default_data = {
+                "key": "value",
+                "dict": {
+                    "a": 1,
+                    "b": 2,
+                }
+            }
+
+        api_model_stub = APIModelStub()
+        assert api_model_stub.response() == APIModelStub.default_data
+
+        APIModelStub.default_data["dict"]["a"] = 97
+        assert api_model_stub.response()["dict"]["a"] == 1
 
 
 class TestArchivedServiceStub:
@@ -138,6 +159,23 @@ class TestBriefStub:
         brief = BriefStub(**{kwarg: value}).single_result_response()
         assert brief["briefs"][key] == value
         assert brief["briefs"]["framework"][inner_key] == value
+
+    @pytest.mark.parametrize(
+        ("framework_slug", "framework_family", "framework_name"),
+        (
+            ("digital-outcomes-and-specialists", "digital-outcomes-and-specialists",
+                "Digital Outcomes and Specialists"),
+            ("digital-outcomes-and-specialists-4", "digital-outcomes-and-specialists",
+                "Digital Outcomes and Specialists 4"),
+            ("my-amazing-framework", "my-amazing-framework", "My Amazing Framework"),
+        )
+    )
+    def test_framework_name_and_family_updated_from_slug(self, framework_slug, framework_family, framework_name):
+        response = BriefStub(framework_slug=framework_slug).response()
+        assert response["frameworkFramework"] == framework_family
+        assert response["frameworkName"] == framework_name
+        assert response["framework"]["family"] == framework_family
+        assert response["framework"]["name"] == framework_name
 
     def test_user_id_kwarg(self):
         assert BriefStub(user_id=234).response()["users"][0]["id"] == 234
@@ -393,7 +431,10 @@ class TestFrameworkStub:
         assert FrameworkStub(slug='digital-outcomes-and-specialists').response() == expected
 
     def test_lots_kwarg_changes_lots_and_framework_agreement_details(self):
-        lots = [LotStub(slug='cloud-hosting').response(), LotStub(slug='cloud-support').response()]
+        lots = [
+            LotStub(slug='cloud-hosting', name='Cloud hosting').response(),
+            LotStub(slug='cloud-support', name='Cloud support').response(),
+        ]
 
         expected = FrameworkStub().response()
         expected["lots"] = lots
@@ -403,7 +444,16 @@ class TestFrameworkStub:
             "cloud-support": "Lot 2: Cloud support",
         }
 
-        assert FrameworkStub(lots=lots).response() == expected
+        response = FrameworkStub(lots=lots).response()
+
+        assert response["lots"] == lots
+        assert response["frameworkAgreementDetails"]["lotOrder"] == ["cloud-hosting", "cloud-support"]
+        assert response["frameworkAgreementDetails"]["lotDescriptions"] == {
+            "cloud-hosting": "Lot 1: Cloud hosting",
+            "cloud-support": "Lot 2: Cloud support",
+        }
+
+        assert response == expected
 
     @pytest.mark.parametrize(
         ("kwarg", "datetime_obj", "key", "value"), (

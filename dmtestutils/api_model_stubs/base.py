@@ -1,4 +1,5 @@
 import re
+from copy import deepcopy
 
 
 class BaseAPIModelStub:
@@ -29,7 +30,7 @@ class BaseAPIModelStub:
     optional_keys = []
 
     def __init__(self, **kwargs):
-        self.response_data = self.default_data.copy()
+        self.response_data = deepcopy(self.default_data)
         self._normalise_kwargs(kwargs)
         self.response_data.update(**kwargs)
 
@@ -46,7 +47,7 @@ class BaseAPIModelStub:
             if kwargs.get(snakecase_kwarg) is not None:
                 kwargs[camelcase_key] = kwargs.pop(snakecase_kwarg)
 
-    def _format_framework(self, slug, oldstyle=False):
+    def _format_framework(self, slug, *, newstyle=True, oldstyle=False):
         """Return a dictionary with correct keys for framework slug"""
         family, iteration = re.match(r"^(?P<family>[a-z-]*)(?:-(?P<iteration>\d+))?$", slug).groups()
         name = (
@@ -59,23 +60,25 @@ class BaseAPIModelStub:
         if iteration:
             name += " " + iteration
 
-        framework = {
-            "family": family,
-            "slug": slug,
-            "name": name,
-        }
-        if not oldstyle:
-            return framework
-        else:
-            oldstyle_keys = {
-                "frameworkFamily": "family",
-                "frameworkSlug": "slug",
-                "frameworkName": "name",
-            }
-            return {
-                oldstyle_key: framework[newstyle_key]
-                for oldstyle_key, newstyle_key in oldstyle_keys.items()
-            }
+        d = {}
+
+        if oldstyle:
+            d.update({
+                "frameworkFamily": family,
+                "frameworkSlug": slug,
+                "frameworkName": name,
+            })
+
+        if newstyle:
+            d.update({
+                "framework": {
+                    "family": family,
+                    "slug": slug,
+                    "name": name,
+                }
+            })
+
+        return d
 
     def _format_values(self, d):
         """Format all entries in a dictionary using values from response data"""

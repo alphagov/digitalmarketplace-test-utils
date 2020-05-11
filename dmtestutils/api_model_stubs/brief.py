@@ -60,6 +60,17 @@ class BriefStub(BaseAPIModelStub):
                 self.response_data['framework'][nested_framework_key] = kwargs.get(snakecase_kwarg)
                 del self.response_data[snakecase_kwarg]
 
+        if (
+            ("framework_slug" in kwargs or "frameworkSlug" in kwargs)
+            and ("framework_name" not in kwargs and "frameworkName" not in kwargs)
+            and ("framework_family" not in kwargs and "frameworkFramework" not in kwargs)
+        ):
+            self.response_data.update(self._format_framework(self.response_data["frameworkSlug"], oldstyle=True))
+            self.response_data["frameworkFramework"] = self.response_data["frameworkFamily"]
+            # The Brief model serialisation still includes the deprecated `frameworkFramework` field.
+            # Use `brief['framework']['family']`, not `brief['frameworkFamily']` or `brief['frameworkFramework]`.
+            del self.response_data["frameworkFamily"]
+
         # Status-dependent values
         if self.response_data['status'] != "draft":
             self.response_data["publishedAt"] = "2016-03-29T10:11:14.000000Z"
