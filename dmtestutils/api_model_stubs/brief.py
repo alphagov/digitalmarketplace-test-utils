@@ -67,6 +67,8 @@ class BriefStub(BaseAPIModelStub):
         ):
             self.response_data.update(self._format_framework(self.response_data["frameworkSlug"], oldstyle=True))
             self.response_data["frameworkFramework"] = self.response_data["frameworkFamily"]
+            # The Brief model serialisation still includes the deprecated `frameworkFramework` field.
+            # Use `brief['framework']['family']`, not `brief['frameworkFamily']` or `brief['frameworkFramework]`.
             del self.response_data["frameworkFamily"]
 
         # Status-dependent values
