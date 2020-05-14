@@ -31,4 +31,6 @@ valid_pdf_bytes = BytesIO(valid_pdf_bytes)
 
 valid_pdf_bytes = b'\x25\x50\x44\x46\xff\xff\xff\xff'
 
+valid_odt_bytes = b'\x74\x65\x78\x74\xff\xff\xff\xff'
+
 valid_jpeg_bytes = valid_jpg_bytes = b'\xff\xd8\xff\xff\xff\xff\xff\xff'
