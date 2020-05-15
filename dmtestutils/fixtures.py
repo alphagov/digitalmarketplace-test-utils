@@ -31,4 +31,8 @@ valid_pdf_bytes = BytesIO(valid_pdf_bytes)
 
 valid_pdf_bytes = b'\x25\x50\x44\x46\xff\xff\xff\xff'
 
+valid_odt_bytes = (b"PK\x03\x04\x14\x00\x00\x08\x00\x00,"
+                   b"~\xacP^\xc62\x0c'\x00\x00\x00'\x00\x00\x00\x08\x00\x00\x00mimetypeapplication/vnd.oasis"
+                   b".opendocument.textPK")
+
 valid_jpeg_bytes = valid_jpg_bytes = b'\xff\xd8\xff\xff\xff\xff\xff\xff'
