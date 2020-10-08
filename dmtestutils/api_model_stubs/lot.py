@@ -30,8 +30,8 @@ def dos_lots():
             lot_id=6, slug='digital-specialists', name='Digital specialists', allows_brief=True, one_service_limit=True
         ).response(),
         LotStub(
-            lot_id=7, slug='user-research-studios', name='User research studios', unit_singular='lab',
-            unit_plural='labs'
+            lot_id=7, slug='user-research-studios', name='User research studios', unit_singular='research studio',
+            unit_plural='research studios'
         ).response(),
         LotStub(
             lot_id=8, slug='user-research-participants', name='User research participants', allows_brief=True,
