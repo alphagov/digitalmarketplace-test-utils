@@ -47,7 +47,7 @@ class BaseAPIModelStub:
             if kwargs.get(snakecase_kwarg) is not None:
                 kwargs[camelcase_key] = kwargs.pop(snakecase_kwarg)
 
-    def _format_framework(self, slug, *, newstyle=True, oldstyle=False):
+    def _format_framework(self, slug, *, new_style: bool, old_style: bool):
         """Return a dictionary with correct keys for framework slug"""
         family, iteration = re.match(r"^(?P<family>[a-z-]*)(?:-(?P<iteration>\d+))?$", slug).groups()
         name = (
@@ -62,14 +62,14 @@ class BaseAPIModelStub:
 
         d = {}
 
-        if oldstyle:
+        if old_style:
             d.update({
                 "frameworkFamily": family,
                 "frameworkSlug": slug,
                 "frameworkName": name,
             })
 
-        if newstyle:
+        if new_style:
             d.update({
                 "framework": {
                     "family": family,

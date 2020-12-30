@@ -54,7 +54,9 @@ class ServicesStubsBase(BaseAPIModelStub):
             and ("framework_name" not in kwargs and "frameworkName" not in kwargs)
             and ("framework_family" not in kwargs and "frameworkFamily" not in kwargs)
         ):
-            self.response_data.update(self._format_framework(self.response_data["frameworkSlug"], oldstyle=True))
+            self.response_data.update(
+                self._format_framework(self.response_data["frameworkSlug"], new_style=False, old_style=True)
+            )
 
 
 class ArchivedServiceStub(ServicesStubsBase):
