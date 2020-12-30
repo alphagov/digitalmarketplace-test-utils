@@ -47,6 +47,7 @@ class FrameworkStub(BaseAPIModelStub):
         'intentionToAwardAtUTC': "2000-01-04T00:00:00.000000Z",
         'frameworkLiveAtUTC': "2000-01-05T00:00:00.000000Z",
         'frameworkExpiresAtUTC': "2000-01-06T00:00:00.000000Z",
+        'isESignatureSupported': False
     }
     optional_keys = [
         ('family', 'framework_family'),

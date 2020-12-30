@@ -385,6 +385,7 @@ class TestFrameworkStub:
             'frameworkExpiresAtUTC': '2000-01-06T00:00:00.000000Z',
             'hasDirectAward': True,
             'hasFurtherCompetition': False,
+            'isESignatureSupported': False
         }
 
     @pytest.mark.parametrize(
