@@ -65,10 +65,14 @@ class BriefStub(BaseAPIModelStub):
             and ("framework_name" not in kwargs and "frameworkName" not in kwargs)
             and ("framework_family" not in kwargs and "frameworkFramework" not in kwargs)
         ):
-            self.response_data.update(self._format_framework(self.response_data["frameworkSlug"], oldstyle=True))
+            # The brief model serialisation includes both new-style and old-style framework keys,
+            # and the deprecated `frameworkFramework` field. Consumers should use `brief['framework']['family']`,
+            # not `brief['frameworkFamily']` or `brief['frameworkFramework]`, but we should still make sure
+            # our test stubs reflect the model.
+            self.response_data.update(
+                self._format_framework(self.response_data["frameworkSlug"], new_style=True, old_style=True)
+            )
             self.response_data["frameworkFramework"] = self.response_data["frameworkFamily"]
-            # The Brief model serialisation still includes the deprecated `frameworkFramework` field.
-            # Use `brief['framework']['family']`, not `brief['frameworkFamily']` or `brief['frameworkFramework]`.
             del self.response_data["frameworkFamily"]
 
         # Status-dependent values
