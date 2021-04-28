@@ -1,0 +1,5 @@
+-e file:.
+
+flake8==3.7.7
+mock
+pytest
