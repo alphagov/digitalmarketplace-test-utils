@@ -1,5 +1,5 @@
 -e file:.
 
-flake8==3.7.7
+flake8==3.9.1
 mock
 pytest
