@@ -7,6 +7,10 @@ jobs:
       matrix:
         python-version: [3.6, 3.7, 3.8, 3.9]
     steps:
+    - name: Read Ubuntu version
+      run: echo ::set-output name=UBUNTU_VERSION::$(lsb_release -r -s)
+      id: ubuntu-version
+
     - uses: actions/checkout@v2
 
     - name: Setup python (${{ matrix.python-version }})
@@ -18,7 +22,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: venv
-        key: venv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/requirements*.txt') }}
+        key: venv-${{ runner.os }}-${{ steps.ubuntu-version.outputs.UBUNTU_VERSION }}-${{ matrix.python-version }}-${{ hashFiles('**/requirements*.txt') }}
 
     - name: Install developer tools
       run: make bootstrap
